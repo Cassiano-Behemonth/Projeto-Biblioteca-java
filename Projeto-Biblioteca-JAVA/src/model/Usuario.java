@@ -1,7 +1,5 @@
 package model;
 
-import java.util.*;
-
 public class Usuario {
     private static int contador = 1;
     private int id;

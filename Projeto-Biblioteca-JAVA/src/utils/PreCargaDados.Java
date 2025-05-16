@@ -1,9 +1,8 @@
 package utils;
 
 import controller.BibliotecaController;
-import model.;
-
-import java.util.;
+import model.*;
+import java.util.*;
 
 public class PreCargaDados {
     public static void carregar(BibliotecaController controller) {

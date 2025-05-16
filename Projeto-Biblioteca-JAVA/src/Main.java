@@ -1,5 +1,3 @@
-package biblioteca;
-
 import controller.BibliotecaController;
 import utils.PreCargaDados;
 import view.MenuConsole;

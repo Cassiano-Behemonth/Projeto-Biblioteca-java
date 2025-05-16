@@ -1,6 +1,6 @@
 package view;
 
-import controllers.BibliotecaController;
+import controller.BibliotecaController;
 import model.*;
 
 import java.util.*;
