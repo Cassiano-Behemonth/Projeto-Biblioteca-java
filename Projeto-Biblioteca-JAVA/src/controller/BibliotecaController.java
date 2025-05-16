@@ -1,10 +1,9 @@
 package controller;
 
-import model.Emprestimo;
-import model.Livro;
-import model.Usuario;
+import model.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BibliotecaController {
     private List<Livro> livros = new ArrayList<>();
@@ -19,47 +18,36 @@ public class BibliotecaController {
         usuarios.add(usuario);
     }
 
-    public List<Livro> pesquisarLivro(String termo) {
-        List<Livro> resultado = new ArrayList<>();
-        for (Livro livro : livros) {
-            if (livro.getTitulo().toLowerCase().contains(termo.toLowerCase()) ||
-                livro.getAutor().toLowerCase().contains(termo.toLowerCase())) {
-                resultado.add(livro);
-            }
-        }
-        return resultado;
+    public List<Livro> buscarLivro(String termo) {
+        return livros.stream().filter(l ->
+            l.getTitulo().equalsIgnoreCase(termo) ||
+            l.getAutor().equalsIgnoreCase(termo) ||
+            l.getCategoria().equalsIgnoreCase(termo)
+        ).collect(Collectors.toList());
     }
 
-    public void realizarEmprestimo(Emprestimo emprestimo) {
-        if (emprestimo.getLivro().getExemplaresDisponiveis() > 0 &&
-            emprestimo.getUsuario().getEmprestimos().isEmpty()) {
-            emprestimos.add(emprestimo);
-            emprestimo.getLivro().emprestar();
-            emprestimo.getUsuario().adicionarEmprestimo(emprestimo);
+    public void realizarEmprestimo(Emprestimo e) {
+        if (e.getLivro().getExemplaresDisponiveis() > 0) {
+            emprestimos.add(e);
+            e.getLivro().emprestar();
         } else {
-            System.out.println("Não foi possível realizar o empréstimo.");
+            System.out.println("Sem exemplares disponíveis.");
         }
     }
 
-    public void registrarDevolucao(Emprestimo emprestimo) {
-        emprestimo.setDataDevolucao(new Date());
-        emprestimo.getLivro().devolver();
-        emprestimo.getUsuario().removerEmprestimo();
+    public void registrarDevolucao(Emprestimo e, Date data) {
+        e.registrarDevolucao(data);
+        e.getLivro().devolver();
+    }
+
+    public List<Emprestimo> listarEmprestimos() {
+        return emprestimos;
     }
 
     public List<Emprestimo> listarAtrasos() {
-        List<Emprestimo> atrasados = new ArrayList<>();
-        Date hoje = new Date();
-        for (Emprestimo e : emprestimos) {
-            if (e.getDataDevolucao() != null && e.getDataDevolucao().after(e.getDataPrevistaDevolucao())) {
-                atrasados.add(e);
-            }
-        }
-        atrasados.sort((a, b) -> b.diasDeAtraso() - a.diasDeAtraso());
-        return atrasados;
+        return emprestimos.stream()
+            .filter(e -> e.getDataDevolucao() != null && e.calcularDiasAtraso() > 0)
+            .sorted((a, b) -> Long.compare(b.calcularDiasAtraso(), a.calcularDiasAtraso()))
+            .collect(Collectors.toList());
     }
-
-    public List<Livro> getLivros() { return livros; }
-    public List<Usuario> getUsuarios() { return usuarios; }
-    public List<Emprestimo> getEmprestimos() { return emprestimos; }
 }

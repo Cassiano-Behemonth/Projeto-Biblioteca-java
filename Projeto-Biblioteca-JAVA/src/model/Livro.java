@@ -5,19 +5,41 @@ public class Livro {
     private int id;
     private String titulo;
     private String autor;
-    private int anoPublicacao;
+    private int ano;
     private String categoria;
-    private int totalExemplares;
     private int exemplaresDisponiveis;
 
-    public Livro(String titulo, String autor, int anoPublicacao, String categoria, int totalExemplares) {
+    public Livro(String titulo, String autor, int ano, String categoria, int exemplares) {
         this.id = contador++;
         this.titulo = titulo;
         this.autor = autor;
-        this.anoPublicacao = anoPublicacao;
+        this.ano = ano;
         this.categoria = categoria;
-        this.totalExemplares = totalExemplares;
-        this.exemplaresDisponiveis = totalExemplares;
+        this.exemplaresDisponiveis = exemplares;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String getAutor() {
+        return autor;
+    }
+
+    public int getAno() {
+        return ano;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public int getExemplaresDisponiveis() {
+        return exemplaresDisponiveis;
     }
 
     public void emprestar() {
@@ -28,15 +50,8 @@ public class Livro {
         exemplaresDisponiveis++;
     }
 
-    public int getId() { return id; }
-    public String getTitulo() { return titulo; }
-    public String getAutor() { return autor; }
-    public int getAnoPublicacao() { return anoPublicacao; }
-    public String getCategoria() { return categoria; }
-    public int getExemplaresDisponiveis() { return exemplaresDisponiveis; }
-
     @Override
     public String toString() {
-        return id + " - " + titulo + " por " + autor + " (" + exemplaresDisponiveis + "/" + totalExemplares + ")";
+        return id + ": " + titulo + " por " + autor + " [" + exemplaresDisponiveis + " disp.]";
     }
 }
