@@ -1,4 +1,4 @@
-package biblioteca.model;
+package model;
 
 public class Livro {
     private static int contador = 1;
