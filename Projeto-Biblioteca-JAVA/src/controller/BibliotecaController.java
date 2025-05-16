@@ -26,6 +26,20 @@ public class BibliotecaController {
         ).collect(Collectors.toList());
     }
 
+    public Livro buscarLivroPorId(int id) {
+        return livros.stream()
+                .filter(l -> l.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Usuario buscarUsuarioPorNome(String nome) {
+        return usuarios.stream()
+                .filter(u -> u.getNome().equalsIgnoreCase(nome))
+                .findFirst()
+                .orElse(null);
+    }
+
     public void realizarEmprestimo(Emprestimo e) {
         if (e.getLivro().getExemplaresDisponiveis() > 0) {
             emprestimos.add(e);

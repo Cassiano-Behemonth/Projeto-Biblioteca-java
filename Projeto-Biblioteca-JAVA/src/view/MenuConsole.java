@@ -35,8 +35,12 @@ public class MenuConsole {
                 case 4 -> emprestarLivro();
                 case 5 -> devolverLivro();
                 case 6 -> listarAtrasos();
+                case 0 -> System.out.println("Encerrando o sistema...");
+                default -> System.out.println("Opção inválida.");
             }
         } while (opcao != 0);
+
+        sc.close(); 
     }
 
     private void cadastrarLivro() {
@@ -54,12 +58,19 @@ public class MenuConsole {
         sc.nextLine();
 
         controller.adicionarLivro(new Livro(titulo, autor, ano, categoria, ex));
+        System.out.println("Livro cadastrado com sucesso.");
     }
 
     private void buscarLivro() {
         System.out.print("Buscar por título/autor/categoria: ");
         String termo = sc.nextLine();
-        controller.buscarLivro(termo).forEach(System.out::println);
+        List<Livro> resultados = controller.buscarLivro(termo);
+
+        if (resultados.isEmpty()) {
+            System.out.println("Nenhum livro encontrado.");
+        } else {
+            resultados.forEach(System.out::println);
+        }
     }
 
     private void cadastrarUsuario() {
@@ -71,48 +82,77 @@ public class MenuConsole {
         String email = sc.nextLine();
         System.out.print("Endereço: ");
         String end = sc.nextLine();
+
         controller.adicionarUsuario(new Usuario(nome, tel, email, end));
+        System.out.println("Usuário cadastrado com sucesso.");
     }
 
     private void emprestarLivro() {
         System.out.print("ID do Livro: ");
         int id = sc.nextInt();
         sc.nextLine();
+
         System.out.print("Nome do Usuário: ");
         String nome = sc.nextLine();
 
-        Livro livro = controller.buscarLivro("").stream().filter(l -> l.getId() == id).findFirst().orElse(null);
-        Usuario usuario = controller.listarEmprestimos().stream().map(Emprestimo::getUsuario).filter(u -> u.getNome().equalsIgnoreCase(nome)).findFirst().orElse(null);
+        Livro livro = controller.buscarLivroPorId(id);
+        Usuario usuario = controller.buscarUsuarioPorNome(nome);
 
-        if (livro != null && usuario != null) {
-            Date hoje = new Date();
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(hoje);
-            cal.add(Calendar.DATE, 7);
-            Date devolucao = cal.getTime();
-
-            controller.realizarEmprestimo(new Emprestimo(livro, usuario, hoje, devolucao));
-        } else {
-            System.out.println("Livro ou usuário não encontrado.");
+        if (livro == null) {
+            System.out.println("Livro não encontrado.");
+            return;
         }
+
+        if (usuario == null) {
+            System.out.println("Usuário não encontrado.");
+            return;
+        }
+
+        Date hoje = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(hoje);
+        cal.add(Calendar.DATE, 7);
+        Date devolucao = cal.getTime();
+
+        controller.realizarEmprestimo(new Emprestimo(livro, usuario, hoje, devolucao));
+        System.out.println("Empréstimo realizado com sucesso.");
     }
 
     private void devolverLivro() {
-        System.out.println("Lista de empréstimos:");
         List<Emprestimo> emps = controller.listarEmprestimos();
+
+        if (emps.isEmpty()) {
+            System.out.println("Nenhum empréstimo registrado.");
+            return;
+        }
+
+        System.out.println("Lista de empréstimos:");
         for (int i = 0; i < emps.size(); i++) {
             System.out.println(i + ": " + emps.get(i));
         }
+
         System.out.print("Escolha o número do empréstimo: ");
         int idx = sc.nextInt();
         sc.nextLine();
 
+        if (idx < 0 || idx >= emps.size()) {
+            System.out.println("Índice inválido.");
+            return;
+        }
+
         Emprestimo e = emps.get(idx);
         controller.registrarDevolucao(e, new Date());
+        System.out.println("Devolução registrada com sucesso.");
     }
 
     private void listarAtrasos() {
         List<Emprestimo> atrasos = controller.listarAtrasos();
+
+        if (atrasos.isEmpty()) {
+            System.out.println("Nenhum atraso encontrado.");
+            return;
+        }
+
         for (Emprestimo e : atrasos) {
             System.out.println(e + " - Atraso: " + e.calcularDiasAtraso() + " dias");
         }
