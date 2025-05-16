@@ -1,8 +1,8 @@
 package biblioteca;
 
-import biblioteca.controller.BibliotecaController;
-import biblioteca.utils.PreCargaDados;
-import biblioteca.view.MenuConsole;
+import controller.BibliotecaController;
+import utils.PreCargaDados;
+import view.MenuConsole;
 
 public class Main {
     public static void main(String[] args) {
