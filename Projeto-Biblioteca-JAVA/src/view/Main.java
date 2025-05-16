@@ -1,3 +1,7 @@
+//Cassiano henrique de oliveira RGM: 38029308
+//Gustavo Henrique de Souza RGM: 38738261
+//Samuel Nogueira de Lima RGM: 38660288
+
 package view;
 
 import controller.BibliotecaController;
